@@ -25,6 +25,9 @@ There are no shared files, libraries, or build artifacts.
 
 ## Git Workflow
 
-- Commit every meaningful change with a descriptive message
-- Push to `origin/main` (GitHub: `alisonkwok95-ux/ClaudeCodeTest`) after each commit
-- Use `git log --oneline` to review history
+**After every piece of work — no exceptions — commit and push to GitHub.** This ensures we never lose progress and can always revert to a known-good state.
+
+- Commit after every meaningful change (new feature, bug fix, new file)
+- Push to `origin/main` (GitHub: `alisonkwok95-ux/ClaudeCodeTest`) immediately after each commit
+- Write clean, descriptive commit messages that explain what changed and why
+- Never leave work uncommitted at the end of a session
