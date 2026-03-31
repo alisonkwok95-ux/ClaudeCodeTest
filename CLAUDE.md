@@ -23,6 +23,10 @@ Each game file is fully self-contained:
 
 There are no shared files, libraries, or build artifacts.
 
+## Git & GitHub
+
+**Always confirm with the user before running git commands that set identity (`git config user.name`, `git config user.email`) or push to remote repositories. Ask for details first.**
+
 ## Git Workflow
 
 **After every piece of work — no exceptions — commit and push to GitHub.** This ensures we never lose progress and can always revert to a known-good state.
@@ -31,3 +35,11 @@ There are no shared files, libraries, or build artifacts.
 - Push to `origin/main` (GitHub: `alisonkwok95-ux/ClaudeCodeTest`) immediately after each commit
 - Write clean, descriptive commit messages that explain what changed and why
 - Never leave work uncommitted at the end of a session
+
+## Web Development
+
+For web games and HTML projects, prefer opening files directly in the browser rather than trying to set up a dev server. Use `open <file>` on macOS or suggest the user open the HTML file directly.
+
+## Workflow
+
+When the user references a specific skill (e.g., /brainstorming), always use that skill rather than attempting the task directly.
