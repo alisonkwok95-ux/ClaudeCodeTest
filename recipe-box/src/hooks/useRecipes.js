@@ -1,0 +1,100 @@
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { supabase } from '../lib/supabase'
+
+export function useRecipeList() {
+  return useQuery({
+    queryKey: ['recipes'],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('recipes')
+        .select('*, recipe_images(*)')
+        .order('created_at', { ascending: false })
+      if (error) throw error
+      return data
+    },
+  })
+}
+
+export function useRecipe(id) {
+  return useQuery({
+    queryKey: ['recipes', id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('recipes')
+        .select('*, recipe_images(*)')
+        .eq('id', id)
+        .single()
+      if (error) throw error
+      return data
+    },
+    enabled: !!id,
+  })
+}
+
+export function useCreateRecipe() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: async ({ recipe, sourceFiles }) => {
+      const { data, error } = await supabase
+        .from('recipes')
+        .insert(recipe)
+        .select()
+        .single()
+      if (error) throw error
+
+      for (const file of sourceFiles) {
+        const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_')
+        const path = `source/${data.id}/${safeName}`
+        const { error: uploadError } = await supabase.storage
+          .from('recipe-images')
+          .upload(path, file)
+        if (uploadError) throw uploadError
+
+        const { error: imgError } = await supabase
+          .from('recipe_images')
+          .insert({ recipe_id: data.id, storage_path: path, image_type: 'source' })
+        if (imgError) throw imgError
+      }
+
+      return data
+    },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['recipes'] }),
+  })
+}
+
+export function useToggleFavourite() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: async ({ id, is_favourite }) => {
+      const { error } = await supabase
+        .from('recipes')
+        .update({ is_favourite })
+        .eq('id', id)
+      if (error) throw error
+    },
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['recipes'] }),
+  })
+}
+
+export function useAddMyVersionPhoto() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: async ({ recipeId, file }) => {
+      const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, '_')
+      const path = `my-version/${recipeId}/${safeName}`
+      const { error: uploadError } = await supabase.storage
+        .from('recipe-images')
+        .upload(path, file)
+      if (uploadError) throw uploadError
+
+      const { error } = await supabase
+        .from('recipe_images')
+        .insert({ recipe_id: recipeId, storage_path: path, image_type: 'my_version' })
+      if (error) throw error
+    },
+    onSuccess: (_, { recipeId }) => {
+      queryClient.invalidateQueries({ queryKey: ['recipes', recipeId] })
+      queryClient.invalidateQueries({ queryKey: ['recipes'] })
+    },
+  })
+}
