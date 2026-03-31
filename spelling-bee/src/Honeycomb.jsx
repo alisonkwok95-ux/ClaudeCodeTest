@@ -3,31 +3,30 @@
 
 const HEX_SIZE = 50; // circumradius
 const HEX_WIDTH = Math.sqrt(3) * HEX_SIZE;
-const HEX_HEIGHT = 2 * HEX_SIZE;
-const GAP = 6;
 
 // Flat-top hexagon polygon points centered at (0,0)
+// Vertices at 0°, 60°, 120°, ... so flat sides face up/down and diagonals
 function hexPoints(size) {
   const pts = [];
   for (let i = 0; i < 6; i++) {
-    const angle = (Math.PI / 180) * (60 * i - 30);
+    const angle = (Math.PI / 180) * (60 * i);
     pts.push(`${size * Math.cos(angle)},${size * Math.sin(angle)}`);
   }
   return pts.join(' ');
 }
 
-// Positions for center + 6 outer hexes (pointy-top layout)
-// Center at origin; outer hexes at 60° intervals
+// Positions for center + 6 outer hexes (flat-top layout)
+// Outer hex centers at 270°, 330°, 30°, 90°, 150°, 210° — aligns with flat sides
 function outerPosition(idx) {
   const angle = (Math.PI / 180) * (60 * idx - 90);
-  const dist = HEX_WIDTH + GAP;
+  const dist = HEX_WIDTH; // exact side-to-side distance = √3 * R
   return {
     x: dist * Math.cos(angle),
     y: dist * Math.sin(angle),
   };
 }
 
-const VIEWBOX_SIZE = (HEX_WIDTH + GAP) * 2 + HEX_WIDTH + 20;
+const VIEWBOX_SIZE = 3 * HEX_WIDTH + 20;
 const VB_HALF = VIEWBOX_SIZE / 2;
 
 export default function Honeycomb({ centerLetter, outerLetters, onLetterClick }) {
