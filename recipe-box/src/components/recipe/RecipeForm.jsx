@@ -63,7 +63,7 @@ export default function RecipeForm({ values, onChange, onSave, isSaving }) {
   }
 
   function addIngredient() {
-    updateField('ingredients', [...values.ingredients, { quantity: null, unit: '', name: '', notes: '' }])
+    updateField('ingredients', [...values.ingredients, { _key: crypto.randomUUID(), quantity: null, unit: '', name: '', notes: '' }])
   }
 
   function updateStep(index, updated) {
@@ -76,7 +76,7 @@ export default function RecipeForm({ values, onChange, onSave, isSaving }) {
   }
 
   function addStep() {
-    updateField('steps', [...values.steps, { order: values.steps.length + 1, text: '', duration_seconds: null }])
+    updateField('steps', [...values.steps, { _key: crypto.randomUUID(), order: values.steps.length + 1, text: '', duration_seconds: null }])
   }
 
   const inputClass = 'w-full border border-stone-300 rounded-lg px-3 py-2 text-sm font-sans bg-white focus:outline-none focus:ring-2 focus:ring-terracotta/40'
@@ -110,7 +110,7 @@ export default function RecipeForm({ values, onChange, onSave, isSaving }) {
         <h3 className="font-serif text-lg mb-2">Ingredients</h3>
         <div className="space-y-2">
           {values.ingredients.map((ing, i) => (
-            <IngredientRow key={i} ingredient={ing} onChange={u => updateIngredient(i, u)} onRemove={() => removeIngredient(i)} />
+            <IngredientRow key={ing._key ?? i} ingredient={ing} onChange={u => updateIngredient(i, u)} onRemove={() => removeIngredient(i)} />
           ))}
         </div>
         <button type="button" onClick={addIngredient} className="mt-2 text-sm text-terracotta hover:text-terracotta-dark font-sans">+ Add ingredient</button>
@@ -120,7 +120,7 @@ export default function RecipeForm({ values, onChange, onSave, isSaving }) {
         <h3 className="font-serif text-lg mb-2">Steps</h3>
         <div className="space-y-2">
           {values.steps.map((step, i) => (
-            <StepRow key={i} step={step} index={i} onChange={u => updateStep(i, u)} onRemove={() => removeStep(i)} />
+            <StepRow key={step._key ?? i} step={step} index={i} onChange={u => updateStep(i, u)} onRemove={() => removeStep(i)} />
           ))}
         </div>
         <button type="button" onClick={addStep} className="mt-2 text-sm text-terracotta hover:text-terracotta-dark font-sans">+ Add step</button>

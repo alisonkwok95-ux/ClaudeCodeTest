@@ -44,7 +44,7 @@ export default function ImageUploader({ files, onChange }) {
       {files.length > 0 && (
         <div className="flex gap-3 flex-wrap">
           {files.map((file, i) => (
-            <div key={i} className="relative group">
+            <div key={`${file.name}-${file.size}-${file.lastModified}`} className="relative group">
               <img
                 src={URL.createObjectURL(file)}
                 alt={`Upload ${i + 1}`}
