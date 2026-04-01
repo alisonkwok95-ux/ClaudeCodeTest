@@ -60,7 +60,7 @@ export default function CookModePage() {
           <div className="lg:col-span-3">
             {steps.length > 0 ? (
               <div className="bg-stone-800 rounded-2xl p-6 space-y-6">
-                <CookStep step={steps[currentIndex]} index={currentIndex} total={steps.length} />
+                <CookStep key={currentIndex} step={steps[currentIndex]} index={currentIndex} total={steps.length} />
                 <div className="flex gap-3 pt-2">
                   <button
                     type="button"

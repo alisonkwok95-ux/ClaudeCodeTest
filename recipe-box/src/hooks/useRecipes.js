@@ -35,9 +35,14 @@ export function useCreateRecipe() {
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: async ({ recipe, sourceFiles }) => {
+      const cleanRecipe = {
+        ...recipe,
+        ingredients: (recipe.ingredients ?? []).map(({ _key, ...rest }) => rest),
+        steps: (recipe.steps ?? []).map(({ _key, ...rest }) => rest),
+      }
       const { data, error } = await supabase
         .from('recipes')
-        .insert(recipe)
+        .insert(cleanRecipe)
         .select()
         .single()
       if (error) throw error
