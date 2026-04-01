@@ -93,8 +93,12 @@ export default function RecipeDetailPage() {
         {recipe.tips && (
           <section className="mb-8 bg-cream-dark rounded-xl p-4 border border-stone-200">
             <h2 className="font-serif text-lg mb-2">Tips & Notes</h2>
-            <p className="text-sm font-sans text-stone-600 leading-relaxed">{recipe.tips}</p>
+            <p className="text-sm font-sans text-stone-600 leading-relaxed whitespace-pre-wrap">{recipe.tips}</p>
           </section>
+        )}
+
+        {recipe.source && (
+          <p className="text-sm font-sans text-stone-400 mb-8">Source: {recipe.source}</p>
         )}
 
         <div className="flex flex-wrap gap-3">

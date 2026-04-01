@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useParams, Link } from 'react-router-dom'
+import { useParams, Link, useNavigate } from 'react-router-dom'
 import { useRecipe } from '../hooks/useRecipes'
 import { useCookSession } from '../hooks/useCookSession'
 import { useWakeLock } from '../hooks/useWakeLock'
@@ -11,6 +11,7 @@ import Spinner from '../components/ui/Spinner'
 
 export default function CookModePage() {
   const { id } = useParams()
+  const navigate = useNavigate()
   const { data: recipe, isLoading, error } = useRecipe(id)
   const [servings, setServings] = useState(null)
   const [checklistOpen, setChecklistOpen] = useState(true)
@@ -70,14 +71,23 @@ export default function CookModePage() {
                   >
                     ← Previous
                   </button>
-                  <button
-                    type="button"
-                    onClick={nextStep}
-                    disabled={currentIndex === steps.length - 1}
-                    className="flex-1 py-3 rounded-xl bg-terracotta text-white font-sans text-sm hover:bg-terracotta-dark disabled:opacity-30 disabled:cursor-not-allowed transition-colors"
-                  >
-                    Next →
-                  </button>
+                  {currentIndex === steps.length - 1 ? (
+                    <button
+                      type="button"
+                      onClick={() => navigate(`/recipe/${id}`)}
+                      className="flex-1 py-3 rounded-xl bg-sage text-white font-sans text-sm hover:opacity-90 transition-colors"
+                    >
+                      Finish ✓
+                    </button>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={nextStep}
+                      className="flex-1 py-3 rounded-xl bg-terracotta text-white font-sans text-sm hover:bg-terracotta-dark transition-colors"
+                    >
+                      Next →
+                    </button>
+                  )}
                 </div>
               </div>
             ) : (

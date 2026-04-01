@@ -131,6 +131,11 @@ export default function RecipeForm({ values, onChange, onSave, isSaving }) {
         <textarea value={values.tips ?? ''} onChange={e => updateField('tips', e.target.value)} rows={3} className={`${inputClass} resize-none`} />
       </div>
 
+      <div>
+        <label className="block text-xs font-sans font-medium text-stone-500 mb-1">Source</label>
+        <input value={values.source ?? ''} onChange={e => updateField('source', e.target.value)} placeholder="e.g. NYT Cooking, Grandma's recipe" className={inputClass} />
+      </div>
+
       <Button type="submit" disabled={isSaving}>
         {isSaving ? 'Saving…' : 'Save Recipe'}
       </Button>
