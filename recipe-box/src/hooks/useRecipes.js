@@ -97,10 +97,11 @@ export function useUpdateRecipe() {
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: async ({ id, recipe }) => {
+      const { recipe_images, id: _id, created_at, ...rest } = recipe
       const clean = {
-        ...recipe,
-        ingredients: (recipe.ingredients ?? []).map(({ _key, ...r }) => r),
-        steps: (recipe.steps ?? []).map(({ _key, ...r }) => r),
+        ...rest,
+        ingredients: (rest.ingredients ?? []).map(({ _key, ...r }) => r),
+        steps: (rest.steps ?? []).map(({ _key, ...r }) => r),
       }
       const { data, error } = await supabase.from('recipes').update(clean).eq('id', id).select().single()
       if (error) throw error
