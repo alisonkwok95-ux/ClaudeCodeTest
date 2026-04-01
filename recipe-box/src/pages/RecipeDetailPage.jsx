@@ -7,6 +7,8 @@ import ServingScaler from '../components/recipe/ServingScaler'
 import Spinner from '../components/ui/Spinner'
 import Button from '../components/ui/Button'
 import { supabase } from '../lib/supabase'
+import Drawer from '../components/ui/Drawer'
+import UnitConverter from '../components/recipe/UnitConverter'
 
 function getImageUrl(recipe, type) {
   const img = recipe.recipe_images?.find(i => i.image_type === type)
@@ -92,6 +94,9 @@ export default function RecipeDetailPage() {
           <Button variant="secondary" onClick={() => setShowConverter(v => !v)}>Unit Converter</Button>
         </div>
       </div>
+      <Drawer open={showConverter} onClose={() => setShowConverter(false)} title="Unit Converter">
+        <UnitConverter />
+      </Drawer>
     </div>
   )
 }
