@@ -1,4 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useNavigate } from 'react-router-dom'
 import { supabase } from '../lib/supabase'
 
 export function useRecipeList() {
@@ -61,9 +62,54 @@ export function useCreateRecipe() {
         if (imgError) throw imgError
       }
 
+      // Fire-and-forget DALL-E image generation (non-blocking)
+      supabase.functions.invoke('generate-recipe-image', {
+        body: {
+          recipeId: data.id,
+          title: data.title,
+          cuisine_tag: data.cuisine_tag,
+          ingredients: data.ingredients,
+        },
+      })
+
       return data
     },
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['recipes'] }),
+  })
+}
+
+export function useDeleteRecipe() {
+  const queryClient = useQueryClient()
+  const navigate = useNavigate()
+  return useMutation({
+    mutationFn: async (id) => {
+      const { error } = await supabase.from('recipes').delete().eq('id', id)
+      if (error) throw error
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['recipes'] })
+      navigate('/')
+    },
+  })
+}
+
+export function useUpdateRecipe() {
+  const queryClient = useQueryClient()
+  return useMutation({
+    mutationFn: async ({ id, recipe }) => {
+      const clean = {
+        ...recipe,
+        ingredients: (recipe.ingredients ?? []).map(({ _key, ...r }) => r),
+        steps: (recipe.steps ?? []).map(({ _key, ...r }) => r),
+      }
+      const { data, error } = await supabase.from('recipes').update(clean).eq('id', id).select().single()
+      if (error) throw error
+      return data
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ['recipes', data.id] })
+      queryClient.invalidateQueries({ queryKey: ['recipes'] })
+    },
   })
 }
 

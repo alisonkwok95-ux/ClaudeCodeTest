@@ -12,7 +12,10 @@ export default function HomePage() {
 
   const filtered = (recipes ?? [])
     .filter(r => !showFavouritesOnly || r.is_favourite)
-    .filter(r => r.title.toLowerCase().includes(search.toLowerCase()))
+    .filter(r =>
+      r.title.toLowerCase().includes(search.toLowerCase()) ||
+      (r.cuisine_tag ?? '').toLowerCase().includes(search.toLowerCase())
+    )
 
   return (
     <div className="min-h-screen bg-cream">

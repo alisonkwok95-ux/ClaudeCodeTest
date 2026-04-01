@@ -32,7 +32,7 @@ Deno.serve(async (req) => {
     })
 
     const response = await client.messages.create({
-      model: "claude-sonnet-4-20250514",
+      model: "claude-sonnet-4-5",
       max_tokens: 4096,
       messages: [
         {
@@ -59,7 +59,9 @@ Return ONLY the JSON object. No markdown code fences. No explanation.`,
       ],
     })
 
-    const text = (response.content[0] as { type: "text"; text: string }).text.trim()
+    let text = (response.content[0] as { type: "text"; text: string }).text.trim()
+    // Strip markdown code fences if present (e.g. ```json ... ```)
+    text = text.replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/, '').trim()
     const recipe = JSON.parse(text)
 
     return new Response(JSON.stringify(recipe), {

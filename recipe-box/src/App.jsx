@@ -5,6 +5,7 @@ import HomePage from './pages/HomePage'
 import ExtractPage from './pages/ExtractPage'
 import RecipeDetailPage from './pages/RecipeDetailPage'
 import CookModePage from './pages/CookModePage'
+import EditRecipePage from './pages/EditRecipePage'
 
 export default function App() {
   return (
@@ -15,6 +16,7 @@ export default function App() {
           <Route path="/extract" element={<ExtractPage />} />
           <Route path="/recipe/:id" element={<RecipeDetailPage />} />
           <Route path="/recipe/:id/cook" element={<CookModePage />} />
+          <Route path="/recipe/:id/edit" element={<EditRecipePage />} />
         </Routes>
       </BrowserRouter>
     </QueryClientProvider>

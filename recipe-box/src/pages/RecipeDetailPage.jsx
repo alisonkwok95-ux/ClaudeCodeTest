@@ -1,6 +1,6 @@
 import { useState, useRef } from 'react'
 import { useParams, Link, useNavigate } from 'react-router-dom'
-import { useRecipe, useAddMyVersionPhoto } from '../hooks/useRecipes'
+import { useRecipe, useAddMyVersionPhoto, useDeleteRecipe } from '../hooks/useRecipes'
 import { scaleIngredients } from '../utils/scaleIngredients'
 import { formatQuantity } from '../utils/formatQuantity'
 import ServingScaler from '../components/recipe/ServingScaler'
@@ -25,6 +25,7 @@ export default function RecipeDetailPage() {
   const [showConverter, setShowConverter] = useState(false)
   const photoInputRef = useRef(null)
   const addMyVersionPhoto = useAddMyVersionPhoto()
+  const deleteRecipe = useDeleteRecipe()
 
   async function handlePhotoUpload(e) {
     const file = e.target.files?.[0]
@@ -38,7 +39,7 @@ export default function RecipeDetailPage() {
 
   const currentServings = servings ?? recipe.servings ?? 4
   const scaledIngredients = scaleIngredients(recipe.ingredients ?? [], recipe.servings ?? currentServings, currentServings)
-  const heroUrl = getImageUrl(recipe, 'my_version') ?? getImageUrl(recipe, 'source')
+  const heroUrl = getImageUrl(recipe, 'my_version') ?? getImageUrl(recipe, 'generated') ?? getImageUrl(recipe, 'source')
 
   return (
     <div className="min-h-screen bg-cream">
@@ -99,6 +100,7 @@ export default function RecipeDetailPage() {
 
         <div className="flex flex-wrap gap-3">
           <Button onClick={() => navigate(`/recipe/${id}/cook`)}>Start Cooking</Button>
+          <Button variant="secondary" onClick={() => navigate(`/recipe/${id}/edit`)}>Edit</Button>
           <Button variant="secondary" onClick={() => setShowConverter(v => !v)}>Unit Converter</Button>
           <Button
             variant="secondary"
@@ -116,6 +118,24 @@ export default function RecipeDetailPage() {
           />
           {addMyVersionPhoto.isError && (
             <p className="w-full text-sm text-red-600 font-sans">{addMyVersionPhoto.error?.message}</p>
+          )}
+        </div>
+
+        <div className="mt-8 pt-6 border-t border-stone-200">
+          <button
+            type="button"
+            onClick={() => {
+              if (window.confirm('Delete this recipe? This cannot be undone.')) {
+                deleteRecipe.mutate(id)
+              }
+            }}
+            disabled={deleteRecipe.isPending}
+            className="text-sm font-sans text-red-500 hover:text-red-700 disabled:opacity-50"
+          >
+            {deleteRecipe.isPending ? 'Deleting…' : 'Delete recipe'}
+          </button>
+          {deleteRecipe.isError && (
+            <p className="mt-1 text-sm text-red-600 font-sans">{deleteRecipe.error?.message}</p>
           )}
         </div>
       </div>

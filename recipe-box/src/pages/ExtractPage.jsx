@@ -39,12 +39,16 @@ export default function ExtractPage() {
       const images = await Promise.all(files.map(fileToBase64))
       const res = await fetch(EDGE_FUNCTION_URL, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json', 'apikey': import.meta.env.VITE_SUPABASE_ANON_KEY },
+        headers: {
+          'Content-Type': 'application/json',
+          'apikey': import.meta.env.VITE_SUPABASE_ANON_KEY,
+          'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
+        },
         body: JSON.stringify({ images }),
       })
       if (!res.ok) {
-        const err = await res.json()
-        throw new Error(err.error ?? 'Extraction failed')
+        const err = await res.json().catch(() => ({}))
+        throw new Error(err.error ?? err.message ?? `Extraction failed (${res.status})`)
       }
       const data = await res.json()
       setRecipe(data)

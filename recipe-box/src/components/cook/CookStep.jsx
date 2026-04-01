@@ -12,7 +12,7 @@ export default function CookStep({ step, index, total }) {
           />
         </div>
       </div>
-      <p className="font-sans text-lg text-stone-800 leading-relaxed">{step.text}</p>
+      <p className="font-sans text-lg text-stone-100 leading-relaxed">{step.text}</p>
       {step.duration_seconds && step.duration_seconds > 0 && (
         <CountdownTimer seconds={step.duration_seconds} />
       )}

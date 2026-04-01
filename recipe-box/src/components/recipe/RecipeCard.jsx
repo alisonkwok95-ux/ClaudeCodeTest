@@ -3,8 +3,9 @@ import { supabase } from '../../lib/supabase'
 
 function getThumbnailUrl(recipe) {
   const myVersion = recipe.recipe_images?.find(img => img.image_type === 'my_version')
+  const generated = recipe.recipe_images?.find(img => img.image_type === 'generated')
   const source = recipe.recipe_images?.find(img => img.image_type === 'source')
-  const img = myVersion ?? source
+  const img = myVersion ?? generated ?? source
   if (!img) return null
   return supabase.storage.from('recipe-images').getPublicUrl(img.storage_path).data.publicUrl
 }
