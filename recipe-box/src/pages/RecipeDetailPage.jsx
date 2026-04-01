@@ -1,6 +1,6 @@
-import { useState } from 'react'
+import { useState, useRef } from 'react'
 import { useParams, Link, useNavigate } from 'react-router-dom'
-import { useRecipe } from '../hooks/useRecipes'
+import { useRecipe, useAddMyVersionPhoto } from '../hooks/useRecipes'
 import { scaleIngredients } from '../utils/scaleIngredients'
 import { formatQuantity } from '../utils/formatQuantity'
 import ServingScaler from '../components/recipe/ServingScaler'
@@ -23,6 +23,14 @@ export default function RecipeDetailPage() {
   const { data: recipe, isLoading, error } = useRecipe(id)
   const [servings, setServings] = useState(null)
   const [showConverter, setShowConverter] = useState(false)
+  const photoInputRef = useRef(null)
+  const addMyVersionPhoto = useAddMyVersionPhoto()
+
+  async function handlePhotoUpload(e) {
+    const file = e.target.files?.[0]
+    if (!file) return
+    await addMyVersionPhoto.mutateAsync({ recipeId: id, file })
+  }
 
   if (isLoading) return <div className="flex justify-center py-20"><Spinner /></div>
   if (error) return <p className="p-8 text-red-600 font-sans">{error.message}</p>
@@ -92,6 +100,23 @@ export default function RecipeDetailPage() {
         <div className="flex flex-wrap gap-3">
           <Button onClick={() => navigate(`/recipe/${id}/cook`)}>Start Cooking</Button>
           <Button variant="secondary" onClick={() => setShowConverter(v => !v)}>Unit Converter</Button>
+          <Button
+            variant="secondary"
+            onClick={() => photoInputRef.current?.click()}
+            disabled={addMyVersionPhoto.isPending}
+          >
+            {addMyVersionPhoto.isPending ? 'Uploading…' : '📷 Add my photo'}
+          </Button>
+          <input
+            ref={photoInputRef}
+            type="file"
+            accept="image/jpeg,image/png,image/webp"
+            className="hidden"
+            onChange={handlePhotoUpload}
+          />
+          {addMyVersionPhoto.isError && (
+            <p className="w-full text-sm text-red-600 font-sans">{addMyVersionPhoto.error?.message}</p>
+          )}
         </div>
       </div>
       <Drawer open={showConverter} onClose={() => setShowConverter(false)} title="Unit Converter">
