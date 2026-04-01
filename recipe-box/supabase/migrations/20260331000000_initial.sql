@@ -16,7 +16,7 @@ create table recipe_images (
   id            uuid primary key default gen_random_uuid(),
   recipe_id     uuid references recipes(id) on delete cascade,
   storage_path  text not null,
-  image_type    text not null check (image_type in ('source', 'my_version')),
+  image_type    text not null check (image_type in ('source', 'my_version', 'generated')),
   created_at    timestamptz default now()
 );
 

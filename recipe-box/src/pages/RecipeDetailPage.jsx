@@ -12,7 +12,6 @@ import UnitConverter from '../components/recipe/UnitConverter'
 
 function getImageUrl(recipe, type) {
   const img = recipe.recipe_images?.find(i => i.image_type === type)
-    ?? recipe.recipe_images?.[0]
   if (!img) return null
   return supabase.storage.from('recipe-images').getPublicUrl(img.storage_path).data.publicUrl
 }

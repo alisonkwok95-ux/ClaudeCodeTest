@@ -1,4 +1,4 @@
-import { createClient } from "npm:@supabase/supabase-js@2"
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2"
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -77,21 +77,22 @@ Deno.serve(async (req) => {
         contentType: "image/jpeg",
         upsert: true,
       })
-    if (uploadError) throw uploadError
+    if (uploadError) throw new Error(`Storage upload failed: ${uploadError.message}`)
 
     // Insert recipe_images row
     const { error: dbError } = await supabase
       .from("recipe_images")
       .insert({ recipe_id: recipeId, storage_path: storagePath, image_type: "generated" })
-    if (dbError) throw dbError
+    if (dbError) throw new Error(`DB insert failed: ${dbError.message}`)
 
     return new Response(JSON.stringify({ storage_path: storagePath }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     })
   } catch (error) {
-    const message = error instanceof Error ? error.message : "Unknown error"
+    const message = error instanceof Error ? error.message : String(error)
+    const stack = error instanceof Error ? error.stack : ""
     return new Response(
-      JSON.stringify({ error: message }),
+      JSON.stringify({ error: message, stack }),
       { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
     )
   }
